@@ -6,19 +6,21 @@ import org.junit.Test;
 
 import javax.crypto.Cipher;
 import java.io.*;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
 import java.security.cert.X509Certificate;
-import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
 
 public class EncryptDecryptMessage {
 
     public static final String KEY_ALIAS = "doc_signer";
     public static final String ENCRYPTED_FILE = "results/encrypted_string.bin";
+    public static final String ORIGINAL_MESSAGE = "H1dd3n";
+    public static final String ENCRYPTED_FILE_PATH = "results/encrypted_string.bin";
     protected KeyStore ks;
 
     public void initKeyStore(String keystore, String ks_pass)
@@ -45,11 +47,10 @@ public class EncryptDecryptMessage {
         return cipher.doFinal(message.getBytes());
     }
 
-    public String decrypt(Key key, byte[] message) throws GeneralSecurityException {
+    public byte[] decrypt(Key key, byte[] message) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, key);
-        byte[] cipherData = cipher.doFinal(message);
-        return new String(cipherData);
+        return cipher.doFinal(message);
     }
 
     @Before
@@ -59,29 +60,28 @@ public class EncryptDecryptMessage {
 
     @Test
     public void encryptThenDecryptString() throws GeneralSecurityException, IOException {
-        String message = "H1dd3n";
+        String originalMessage = "H1dd3n";
         Key publicKey = getPublicKey(KEY_ALIAS);
         Key privateKey = getPrivateKey(KEY_ALIAS, SignDocumentTest.KEY_STORE_PASSWORD);
 
         // Encrypt with pub, decrypt with pri
-        byte[] encryptedMessage = encrypt(publicKey, message);
-        String unencryptedMessage = decrypt(privateKey, encryptedMessage);
-        System.out.println(unencryptedMessage);
+        byte[] encryptedMessage = encrypt(publicKey, originalMessage);
+        String unencryptedMessage = new String(decrypt(privateKey, encryptedMessage), Charset.defaultCharset());
+        assertEquals(originalMessage, unencryptedMessage);
 
         // Encrypt with pri, decrypt with pub
-        encryptedMessage = encrypt(privateKey, message);
-        unencryptedMessage = decrypt(publicKey, encryptedMessage);
-        System.out.println(unencryptedMessage);
+        encryptedMessage = encrypt(privateKey, originalMessage);
+        unencryptedMessage = new String(decrypt(publicKey, encryptedMessage), Charset.defaultCharset());
+        assertEquals(originalMessage, unencryptedMessage);
     }
 
     @Test
     public void encryptThenDecryptFileContent() throws GeneralSecurityException, IOException {
-        String message = "H1dd3n";
         Key publicKey = getPublicKey(KEY_ALIAS);
         Key privateKey = getPrivateKey(KEY_ALIAS, SignDocumentTest.KEY_STORE_PASSWORD);
 
         // Encrypt with public key
-        byte[] encryptedMessage = encrypt(publicKey, message);
+        byte[] encryptedMessage = encrypt(publicKey, ORIGINAL_MESSAGE);
 
         // write byte[] to file
         try (FileOutputStream fos = new FileOutputStream(ENCRYPTED_FILE)) {
@@ -93,21 +93,18 @@ public class EncryptDecryptMessage {
         byte[] fileContent = Files.readAllBytes(file.toPath());
 
         // decrypt byte[]
-        String unencryptedMessage = decrypt(privateKey, fileContent);
+        String unencryptedMessage = new String(decrypt(privateKey, fileContent), Charset.defaultCharset());
 
-        // print original message
-        System.out.println(unencryptedMessage);
+        // Assert unencrypted message is equal to the original message
+        assertEquals(ORIGINAL_MESSAGE, unencryptedMessage);
     }
 
     @Test
     public void decryptStringFromFileUsingPrivateKey() throws GeneralSecurityException, IOException {
-        String inputFile = "results/encrypted_string.bin";
         Key privateKey = getPrivateKey(KEY_ALIAS, SignDocumentTest.KEY_STORE_PASSWORD);
-        Path encryptedFilePath = Paths.get("results/encrypted_string.bin");
+        byte[] fileBytes = Files.readAllBytes(Paths.get(ENCRYPTED_FILE_PATH));
 
-        byte[] fileBytes = Files.readAllBytes(encryptedFilePath);
-
-        String decryptedMessage = decrypt(privateKey, fileBytes);
-        System.out.println("Decrypted Message: " + decryptedMessage);
+        String decryptedMessage = new String(decrypt(privateKey, fileBytes), Charset.defaultCharset());
+        assertEquals(ORIGINAL_MESSAGE, decryptedMessage);
     }
 }

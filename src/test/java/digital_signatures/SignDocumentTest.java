@@ -83,6 +83,8 @@ public class SignDocumentTest {
     public void removeSignatureFromPdf(String inputFilePath, String outputFilePath) throws DocumentException, IOException {
         PdfReader reader = new PdfReader(inputFilePath);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(outputFilePath));
+
+        // stamper.getAcroFields().setGenerateAppearances(true);
         stamper.setFormFlattening(true);
         stamper.close();
         reader.close();
