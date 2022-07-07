@@ -13,6 +13,19 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 
+/**
+ * The tests present in this class only work with older versions of iText5 < v5.3.0
+ * There has been a change made where setCrypto method of the PdfSignatureAppearance isn't present anymore.
+ *
+ * A change has been made in iText5 versions >= v5.3.0.
+ * The change blocks the use of non-detached signatures.
+ * In other words, you must use detached signatures from now on.
+ * Detached Signatures Details:
+ * - The detached signature option is available to provide everyone with the option of viewing the message without having the public key.
+ * - This creates a separate signature file that is used to verify the original message if desired.
+ * - In its simplest form, this file contains a hash of the original message and is encrypted with the private key.
+ * - Anyone with the public key can open the signature and then compare hashes to verify the integrity of the signed file.
+ */
 public class SignDocumentTest {
     public static final String ORIGINAL_DOC = "results/unsigned.pdf";
     public static final String SIGNED_DOC = "results/signed.pdf";
@@ -75,7 +88,7 @@ public class SignDocumentTest {
         PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
         appearance.setReason(SIGNATURE_REASON);
         appearance.setLocation(SIGNATURE_LOCATION);
-        appearance.setCrypto(pk, chain, null, PdfSignatureAppearance.WINCER_SIGNED);    // TODO ?
+        // appearance.setCrypto(pk, chain, null, PdfSignatureAppearance.WINCER_SIGNED); // OLD
         appearance.setCertificationLevel(PdfSignatureAppearance.CERTIFIED_FORM_FILLING);
         stamper.close();
     }
@@ -103,7 +116,7 @@ public class SignDocumentTest {
 //     stamper.close();
 //     reader.close();
 // }
-// cloud uses 5.4.5
+
 // v5.5.5
 // PdfReader reader = new PdfReader(new FileInputStream(file));
 // FileOutputStream fout = new FileOutputStream(new File(targetDir, fileName));

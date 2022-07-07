@@ -34,30 +34,25 @@
             <version>5.5.12</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.bouncycastle</groupId>-->
-<!--            <artifactId>bcpkix-jdk15on</artifactId>-->
-<!--            <version>1.47</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.bouncycastle</groupId>-->
-<!--            <artifactId>bcprov-jdk15on</artifactId>-->
-<!--            <version>1.47</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bctsp-jdk15</artifactId>
-            <version>1.46</version>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.49</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.49</version>
         </dependency>
 <!--        <dependency>-->
-<!--            <groupId>org.apache.santuario</groupId>-->
-<!--            <artifactId>xmlsec</artifactId>-->
-<!--            <version>1.5.1</version>-->
+<!--            <groupId>org.bouncycastle</groupId>-->
+<!--            <artifactId>bctsp-jdk15</artifactId>-->
+<!--            <version>1.49</version>-->
 <!--        </dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
 
