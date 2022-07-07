@@ -26,6 +26,8 @@
 <!--    </properties>-->
 
     <dependencies>
+
+<!--        From whitepaper: Note that the code used in this paper will only work with iText version 5.3.4 and later.-->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
