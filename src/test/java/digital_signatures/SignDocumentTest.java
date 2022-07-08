@@ -93,12 +93,22 @@ public class SignDocumentTest {
         stamper.close();
     }
 
-    public void removeSignatureFromPdf(String inputFilePath, String outputFilePath) throws DocumentException, IOException {
+    public void removeSignatureFromPdfByFlattening(String inputFilePath, String outputFilePath) throws DocumentException, IOException {
         PdfReader reader = new PdfReader(inputFilePath);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(outputFilePath));
 
         // stamper.getAcroFields().setGenerateAppearances(true);
         stamper.setFormFlattening(true);
+        stamper.close();
+        reader.close();
+    }
+
+    public void removeSignatureFromPdf(String inputFilePath, String outputFilePath) throws DocumentException, IOException {
+        PdfReader reader = new PdfReader(inputFilePath);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(outputFilePath));
+
+        stamper.getAcroFields().clearSignatureField(SIGNATURE_FIELD_NAME);
+        // stamper.setFormFlattening(true);
         stamper.close();
         reader.close();
     }

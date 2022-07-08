@@ -60,19 +60,18 @@ public class EncryptDecryptMessage {
 
     @Test
     public void encryptThenDecryptString() throws GeneralSecurityException, IOException {
-        String originalMessage = "H1dd3n";
         Key publicKey = getPublicKey(KEY_ALIAS);
         Key privateKey = getPrivateKey(KEY_ALIAS, SignDocumentTest.KEY_STORE_PASSWORD);
 
         // Encrypt with pub, decrypt with pri
-        byte[] encryptedMessage = encrypt(publicKey, originalMessage);
+        byte[] encryptedMessage = encrypt(publicKey, ORIGINAL_MESSAGE);
         String unencryptedMessage = new String(decrypt(privateKey, encryptedMessage), Charset.defaultCharset());
-        assertEquals(originalMessage, unencryptedMessage);
+        assertEquals(ORIGINAL_MESSAGE, unencryptedMessage);
 
         // Encrypt with pri, decrypt with pub
-        encryptedMessage = encrypt(privateKey, originalMessage);
+        encryptedMessage = encrypt(privateKey, ORIGINAL_MESSAGE);
         unencryptedMessage = new String(decrypt(publicKey, encryptedMessage), Charset.defaultCharset());
-        assertEquals(originalMessage, unencryptedMessage);
+        assertEquals(ORIGINAL_MESSAGE, unencryptedMessage);
     }
 
     @Test
